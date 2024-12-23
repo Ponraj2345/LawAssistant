@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "876487796716",
+    "project_id": "law-assistant-68b09",
+    "storage_bucket": "law-assistant-68b09.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:876487796716:android:bb8df14a3a5049bfd342c9",
+        "android_client_info": {
+          "package_name": "com.example.law_assistant"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA6kLGo9aEPMzHYfOrClZ_QLiBUbvtTWKI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
