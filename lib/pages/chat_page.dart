@@ -6,6 +6,7 @@ import 'package:law_assistant/services/constants.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_tts/flutter_tts.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -13,8 +14,8 @@ class ChatPage extends StatefulWidget {
   @override
   State<ChatPage> createState() => _ChatPageState();
 }
-
 class _ChatPageState extends State<ChatPage> {
+  final FlutterTts _flutterTts = FlutterTts();
   TextEditingController messageController = TextEditingController();
   ScrollController scrollController=ScrollController();
   List msgs = ['Hi! Feel free to ask me any query regarding any Legal Consultation'];
@@ -190,21 +191,21 @@ class _ChatPageState extends State<ChatPage> {
                           padding: const EdgeInsets.all(8.0),
                           child: GestureDetector(
                               onTap: () async{
-                                if(await speechToText.hasPermission && speechToText.isNotListening){
-                                  _startListening();
-                                }
-                                else if(await speechToText.isListening){
-                                  _stopListening();
-                                }
-                                else{
-                                  initializeSpeechToText();
-                                }
+                                // if(await speechToText.hasPermission && speechToText.isNotListening){
+                                //   _startListening();
+                                // }
+                                // else if(await speechToText.isListening){
+                                //   _stopListening();
+                                // }
+                                // else{
+                                //   initializeSpeechToText();
+                                // }
+                                speak(messageController.text);
                               },
-                              child: Icon((speechToText.isListening)?Icons.rectangle:Icons.mic,size: 40,color: Colors.white,)
+                              child: Icon(Icons.speaker))
                           ),
                         )
                     ),
-                  )
                 ],
               ),
             ),
@@ -242,7 +243,7 @@ class _ChatPageState extends State<ChatPage> {
           model: 'gemini-1.5-flash',
           apiKey: API_KEY,
         );
-        final checking = await model.generateContent([Content.text("is this prompt related to law or any greeting message, $prompt, reply with simple Yes or No")]);
+        final checking = await model.generateContent([Content.text("Determine if the following query is related to law, legal information, or legal processes. The query should be processed if it pertains to law, courts, legal rights, acts, contracts, or any similar legal context. If the query is about general topics, greetings, or unrelated subjects like sports, celebrities, or unrelated events, respond with 'No.' Otherwise, respond with 'Yes.' Query: '$prompt")]);
         print(checking.text);
         if(checking.text?.trim().toUpperCase() == 'NO'){
           setState(() {
@@ -251,7 +252,7 @@ class _ChatPageState extends State<ChatPage> {
           });
           return;
         }
-        final response = await model.generateContent([Content.text(prompt)]);
+        final response = await model.generateContent([Content.text("When processing this query, please respond as if you are a knowledgeable legal consultant. Your tone should be professional yet friendly, clear, and conversational. Avoid sounding robotic or overly formal. Provide concise legal advice, helpful suggestions, or actionable steps as appropriate.You should consider this for Indian laws only, Query: '$prompt")]);
         setState(() {
           msgs.add(response.text);
         });
@@ -261,6 +262,16 @@ class _ChatPageState extends State<ChatPage> {
       }
   }
 
+  Future<void> speak(String text) async {
+    await _flutterTts.setLanguage("en-US"); // Set language (e.g., English - US)
+    await _flutterTts.setPitch(1.0); // Set pitch (1.0 is normal)
+    await _flutterTts.setSpeechRate(0.5); // Set speed of speech (0.5 is normal)
+    await _flutterTts.speak(text); // Start speaking
+  }
+
+  Future<void> stop() async {
+    await _flutterTts.stop(); // Stop speaking
+  }
   @override
   void initState() {
     super.initState();
